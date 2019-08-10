@@ -5,7 +5,6 @@ import com.support.domain.SupportInfoDto;
 import com.support.domain.SupportInfoTable;
 import com.support.repository.SupportInfoRepository;
 import lombok.Data;
-import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -74,12 +73,21 @@ public class SupportInfoBizImpl implements SupportInfoBiz {
 
     @Data
     class SortInfo {
+        String region;
         String institute;
         Double rate;
+        Long limit;
 
         SortInfo(String institute, Double rate) {
             this.institute = institute;
             this.rate = rate;
+        }
+
+        SortInfo(String region, String institute, Double rate, Long limit) {
+            this.region = region;
+            this.institute = institute;
+            this.rate = rate;
+            this.limit = limit;
         }
     }
 
@@ -87,29 +95,10 @@ public class SupportInfoBizImpl implements SupportInfoBiz {
     public List<String> searchInstituteByMinRate() {
         List<SupportInfoTable> supportInfoTableList = supportInfoRepository.findAll();
         List<SortInfo> sortInfoList = new ArrayList<>();
-        List<String> instituteMinRateList = new ArrayList<>();
+        List<String> instituteList = new ArrayList<>();
 
         for(SupportInfoTable supportInfoTable : supportInfoTableList) {
-            String rate = supportInfoTable.getRate();
-
-            if(rate.equals("대출이자 전액")) {
-                rate = "100.0";
-            } else {
-                String splitArr[] = rate.split("~");
-
-                if(splitArr.length == 1) {
-                    splitArr[0] = splitArr[0].replaceAll("%","");
-                } else if(splitArr.length == 2) {
-                    splitArr[0] = splitArr[0].replaceAll("%","");
-                    splitArr[1] = splitArr[1].replaceAll("%","");
-                    BigDecimal numA = new BigDecimal(splitArr[0]);
-                    BigDecimal numB = new BigDecimal(splitArr[1]);
-
-                    splitArr[0] = numA.add(numB).divide(new BigDecimal(2), 3, BigDecimal.ROUND_HALF_UP).toString();
-                }
-                rate = splitArr[0];
-            }
-            //supportInfoTable.setRate(rate);
+            String rate = calRate(supportInfoTable.getRate());
             sortInfoList.add(new SortInfo(supportInfoTable.getInstitute(), Double.parseDouble(rate)));
         }
 
@@ -120,13 +109,42 @@ public class SupportInfoBizImpl implements SupportInfoBiz {
         double minRate = sortInfoList.get(0).getRate();
         for(SortInfo sortInfo : sortInfoList) {
             if(minRate == sortInfo.getRate()) {
-                instituteMinRateList.add(sortInfo.getInstitute());
+                instituteList.add(sortInfo.getInstitute());
             } else{
                 break;
             }
         }
 
-        return instituteMinRateList;
+        return instituteList;
+    }
+
+    @Override
+    public List<String> searchRegionLimitDescByCnt(int cnt) {
+        List<SupportInfoTable> supportInfoTableList = supportInfoRepository.findAll();
+        List<SortInfo> sortInfoList = new ArrayList<>();
+        List<String> instituteList = new ArrayList<>();
+
+        for(SupportInfoTable supportInfoTable : supportInfoTableList) {
+            String limit = calLimit(supportInfoTable.getLimit());
+            String rate = calRate(supportInfoTable.getRate());
+            sortInfoList.add(new SortInfo(supportInfoTable.getMunicipality().getRegion(),supportInfoTable.getInstitute(), Double.parseDouble(rate), Long.parseLong(limit)));
+        }
+
+        sortInfoList = sortInfoList.stream().sorted(Comparator.comparing(SortInfo::getLimit).reversed()
+                .thenComparing(SortInfo::getRate))
+                .collect(Collectors.toList());
+
+        cnt = Math.min(cnt, sortInfoList.size());
+
+        for(SortInfo sortInfo : sortInfoList) {
+            instituteList.add(sortInfo.getInstitute());
+            cnt--;
+            if(cnt == 0) {
+                break;
+            }
+        }
+
+        return instituteList;
     }
 
     private SupportInfoTable convertDateToSupportInfoTable(SupportInfoDto supportInfoDto, String code) {
@@ -138,6 +156,7 @@ public class SupportInfoBizImpl implements SupportInfoBiz {
 
         supportInfoTable.setMunicipality(municipality);
         supportInfoTable.setCode(code);
+
         supportInfoTable.setTarget(supportInfoDto.getTarget());
         supportInfoTable.setUsage(supportInfoDto.getUsage());
         supportInfoTable.setLimit(supportInfoDto.getLimit());
@@ -164,6 +183,36 @@ public class SupportInfoBizImpl implements SupportInfoBiz {
         supportInfoDto.setReception(supportInfoTable.getReception());
 
         return supportInfoDto;
+    }
+
+    private String calRate(String rate) {
+        if (rate.equals("대출이자 전액")) {
+            rate = "100.0";
+        } else {
+            String splitRate[] = rate.replaceAll("%", "").split("~");
+
+            if (splitRate.length == 2) {
+                BigDecimal numA = new BigDecimal(splitRate[0]);
+                BigDecimal numB = new BigDecimal(splitRate[1]);
+                splitRate[0] = numA.add(numB).divide(new BigDecimal(2), 3, BigDecimal.ROUND_HALF_UP).toString();
+            }
+            rate = splitRate[0];
+        }
+        return rate;
+    }
+
+    private String calLimit(String limit) {
+        String splitLimit = limit.split(" ")[0];
+        String num = splitLimit.replaceAll("[^0-9]", "");
+        String unit = splitLimit.replaceAll("[0-9]", "");
+
+        switch (unit) {
+            case "백만원" : num = num + "000000"; break;
+            case "천만원" : num = num + "0000000"; break;
+            case "억원" : num = num + "00000000"; break;
+            default : num = "0"; break;
+        }
+        return num;
     }
 
 }

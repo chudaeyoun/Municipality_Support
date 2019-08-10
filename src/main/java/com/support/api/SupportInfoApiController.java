@@ -1,5 +1,7 @@
 package com.support.api;
 
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
 import com.support.domain.Municipality;
 import com.support.domain.SupportInfoDto;
 import com.support.domain.SupportInfoTable;
@@ -39,7 +41,7 @@ public class SupportInfoApiController {
     private MunicipalityBiz municipalityBiz;
 
     @PostMapping("/uploadCsvFile")
-    public ResponseEntity<String> singleFileUpload(@RequestParam("file") MultipartFile file) throws IOException {
+     public ResponseEntity<String> singleFileUpload(@RequestParam("file") MultipartFile file) throws IOException {
         if (file.isEmpty()) {
             logger.error("파일을 확인해주세요.");
             return new ResponseEntity(new BizException("파일을 확인해주세요."), HttpStatus.BAD_REQUEST);
@@ -72,7 +74,7 @@ public class SupportInfoApiController {
                             csv[0] = code;
                             break;
                         } else {
-                            System.out.println("duplicate code = " + code);
+                            logger.error("duplicate code = " + code);
                         }
                     }
 
@@ -162,23 +164,39 @@ public class SupportInfoApiController {
 
 
     @GetMapping("/searchRegionLimitDescByCnt")
-    public ResponseEntity<SupportInfoDto> searchRegionLimitDescByCnt(@RequestBody int cnt) {
+    public ResponseEntity<SupportInfoDto> searchRegionLimitDescByCnt(@RequestBody String json) {
+        JsonParser jp = new JsonParser();
+        JsonElement je = jp.parse(json);
+        int cnt = je.getAsJsonObject().get("cnt").getAsInt();
+
+        System.out.println(je.getAsJsonObject().get("cnt"));
+        System.out.println("put cnt = " + cnt);
+
         if (cnt < 0) {
             logger.error("파라미터 확인을 해주세요. param {cnt} => 0보다 작음");
-            return new ResponseEntity(new BizException("cnt 이 0보다 작습니다."), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity(new BizException("cnt가 0보다 작습니다."), HttpStatus.BAD_REQUEST);
         }
-        SupportInfoDto supportInfoDto = new SupportInfoDto();
-        return new ResponseEntity(supportInfoDto, HttpStatus.OK);
+
+        try {
+            List<String> instituteList = supportInfoBiz.searchRegionLimitDescByCnt(cnt);
+            if (instituteList.isEmpty()) {
+                return new ResponseEntity(instituteList, HttpStatus.NO_CONTENT);
+            }
+            return new ResponseEntity(instituteList, HttpStatus.OK);
+        } catch (Exception e) {
+            logger.error(e.getMessage());
+            return new ResponseEntity(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @GetMapping("/searchInstituteByMinRate")
     public ResponseEntity<List<String>> searchInstituteByMinRate() {
         try {
-            List<String> institute = supportInfoBiz.searchInstituteByMinRate();
-            if (institute == null) {
-                return new ResponseEntity(institute, HttpStatus.NO_CONTENT);
+            List<String> instituteList = supportInfoBiz.searchInstituteByMinRate();
+            if (instituteList.isEmpty()) {
+                return new ResponseEntity(instituteList, HttpStatus.NO_CONTENT);
             }
-            return new ResponseEntity(institute, HttpStatus.OK);
+            return new ResponseEntity(instituteList, HttpStatus.OK);
         } catch (Exception e) {
             logger.error(e.getMessage());
             return new ResponseEntity(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);

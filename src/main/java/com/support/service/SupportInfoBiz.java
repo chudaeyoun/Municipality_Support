@@ -17,4 +17,6 @@ public interface SupportInfoBiz {
     SupportInfoDto updateSupportInfo(SupportInfoDto supportInfoDto, String code);
 
     List<String> searchInstituteByMinRate();
+
+    List<String> searchRegionLimitDescByCnt(int cnt);
 }
