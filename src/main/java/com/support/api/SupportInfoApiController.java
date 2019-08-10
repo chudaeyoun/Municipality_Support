@@ -92,7 +92,7 @@ public class SupportInfoApiController {
     }
 
     @GetMapping("/list")
-    public ResponseEntity<List<String>> getAllSupportInfoList() {
+    public ResponseEntity<List<SupportInfoDto>> getAllSupportInfoList() {
         try {
             List<SupportInfoDto> SupportInfoDtoList = supportInfoBiz.getAllSupportInfoList();
             if (SupportInfoDtoList.isEmpty()) {
@@ -161,4 +161,27 @@ public class SupportInfoApiController {
     }
 
 
+    @GetMapping("/searchRegionLimitDescByCnt")
+    public ResponseEntity<SupportInfoDto> searchRegionLimitDescByCnt(@RequestBody int cnt) {
+        if (cnt < 0) {
+            logger.error("파라미터 확인을 해주세요. param {cnt} => 0보다 작음");
+            return new ResponseEntity(new BizException("cnt 이 0보다 작습니다."), HttpStatus.BAD_REQUEST);
+        }
+        SupportInfoDto supportInfoDto = new SupportInfoDto();
+        return new ResponseEntity(supportInfoDto, HttpStatus.OK);
+    }
+
+    @GetMapping("/searchInstituteByMinRate")
+    public ResponseEntity<List<String>> searchInstituteByMinRate() {
+        try {
+            List<String> institute = supportInfoBiz.searchInstituteByMinRate();
+            if (institute == null) {
+                return new ResponseEntity(institute, HttpStatus.NO_CONTENT);
+            }
+            return new ResponseEntity(institute, HttpStatus.OK);
+        } catch (Exception e) {
+            logger.error(e.getMessage());
+            return new ResponseEntity(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 }

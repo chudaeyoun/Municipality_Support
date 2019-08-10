@@ -15,4 +15,6 @@ public interface SupportInfoBiz {
     SupportInfoDto getSupportInfoByCode(String code);
 
     SupportInfoDto updateSupportInfo(SupportInfoDto supportInfoDto, String code);
+
+    List<String> searchInstituteByMinRate();
 }
