@@ -10,8 +10,6 @@ public interface SupportInfoBiz {
 
     void insertSupportInfoTable(String[] csv);
 
-    void updateSunpportInfoTable(String[] csv);
-
     SupportInfoDto getSupportInfoByCode(String code);
 
     SupportInfoDto updateSupportInfo(SupportInfoDto supportInfoDto, String code);

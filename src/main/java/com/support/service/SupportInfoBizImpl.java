@@ -1,6 +1,7 @@
 package com.support.service;
 
 import com.support.domain.Municipality;
+import com.support.domain.SortInfoDto;
 import com.support.domain.SupportInfoDto;
 import com.support.domain.SupportInfoTable;
 import com.support.repository.SupportInfoRepository;
@@ -55,11 +56,6 @@ public class SupportInfoBizImpl implements SupportInfoBiz {
     }
 
     @Override
-    public void updateSunpportInfoTable(String[] csv) {
-        // update 어떻게 할지 만들어야함
-    }
-
-    @Override
     public SupportInfoDto getSupportInfoByCode(String code) {
         SupportInfoTable supportInfoTable = supportInfoRepository.findByCode(code);
         return convertDateToSupportInfoDto(supportInfoTable);
@@ -71,45 +67,30 @@ public class SupportInfoBizImpl implements SupportInfoBiz {
         return convertDateToSupportInfoDto(supportInfoTable);
     }
 
-    @Data
-    class SortInfo {
-        String region;
-        String institute;
-        Double rate;
-        Long limit;
-
-        SortInfo(String institute, Double rate) {
-            this.institute = institute;
-            this.rate = rate;
-        }
-
-        SortInfo(String region, String institute, Double rate, Long limit) {
-            this.region = region;
-            this.institute = institute;
-            this.rate = rate;
-            this.limit = limit;
-        }
-    }
-
     @Override
     public List<String> searchInstituteByMinRate() {
         List<SupportInfoTable> supportInfoTableList = supportInfoRepository.findAll();
-        List<SortInfo> sortInfoList = new ArrayList<>();
+        List<SortInfoDto> sortInfoDtoList = new ArrayList<>();
         List<String> instituteList = new ArrayList<>();
 
         for(SupportInfoTable supportInfoTable : supportInfoTableList) {
             String rate = calRate(supportInfoTable.getRate());
-            sortInfoList.add(new SortInfo(supportInfoTable.getInstitute(), Double.parseDouble(rate)));
+            SortInfoDto sortInfoDto = new SortInfoDto();
+
+            sortInfoDto.setInstitute(supportInfoTable.getInstitute());
+            sortInfoDto.setRate(Double.parseDouble(rate));
+
+            sortInfoDtoList.add(sortInfoDto);
         }
 
-        sortInfoList = sortInfoList.stream().sorted(Comparator.comparing((SortInfo::getRate)))
+        sortInfoDtoList = sortInfoDtoList.stream().sorted(Comparator.comparing((SortInfoDto::getRate)))
                                     .collect(Collectors.toList());
 
         // 최소가 여러 개 있을 수도 있으니 리스트로 반환
-        double minRate = sortInfoList.get(0).getRate();
-        for(SortInfo sortInfo : sortInfoList) {
-            if(minRate == sortInfo.getRate()) {
-                instituteList.add(sortInfo.getInstitute());
+        double minRate = sortInfoDtoList.get(0).getRate();
+        for(SortInfoDto sortInfoDto : sortInfoDtoList) {
+            if(minRate == sortInfoDto.getRate()) {
+                instituteList.add(sortInfoDto.getInstitute());
             } else{
                 break;
             }
@@ -121,22 +102,29 @@ public class SupportInfoBizImpl implements SupportInfoBiz {
     @Override
     public List<String> searchRegionLimitDescByCnt(int cnt) {
         List<SupportInfoTable> supportInfoTableList = supportInfoRepository.findAll();
-        List<SortInfo> sortInfoList = new ArrayList<>();
+        List<SortInfoDto> sortInfoDtoList = new ArrayList<>();
         List<String> instituteList = new ArrayList<>();
 
         for(SupportInfoTable supportInfoTable : supportInfoTableList) {
             String limit = calLimit(supportInfoTable.getLimit());
             String rate = calRate(supportInfoTable.getRate());
-            sortInfoList.add(new SortInfo(supportInfoTable.getMunicipality().getRegion(),supportInfoTable.getInstitute(), Double.parseDouble(rate), Long.parseLong(limit)));
+            SortInfoDto sortInfoDto = new SortInfoDto();
+
+            sortInfoDto.setRegion(supportInfoTable.getMunicipality().getRegion());
+            sortInfoDto.setInstitute(supportInfoTable.getInstitute());
+            sortInfoDto.setRate(Double.parseDouble(rate));
+            sortInfoDto.setLimit(Long.parseLong(limit));
+
+            sortInfoDtoList.add(sortInfoDto);
         }
 
-        sortInfoList = sortInfoList.stream().sorted(Comparator.comparing(SortInfo::getLimit).reversed()
-                .thenComparing(SortInfo::getRate))
+        sortInfoDtoList = sortInfoDtoList.stream().sorted(Comparator.comparing(SortInfoDto::getLimit).reversed()
+                .thenComparing(SortInfoDto::getRate))
                 .collect(Collectors.toList());
 
-        cnt = Math.min(cnt, sortInfoList.size());
+        cnt = Math.min(cnt, sortInfoDtoList.size());
 
-        for(SortInfo sortInfo : sortInfoList) {
+        for(SortInfoDto sortInfo : sortInfoDtoList) {
             instituteList.add(sortInfo.getInstitute());
             cnt--;
             if(cnt == 0) {

@@ -55,7 +55,7 @@ public class SupportInfoApiController {
             InputStreamReader inputStreamReader = new InputStreamReader(file.getInputStream(), "MS949");
             BufferedReader in = new BufferedReader(inputStreamReader);
 
-            line = in.readLine(); // 첫 줄 건너 뛰기
+            in.readLine(); // 첫 줄 건너 뛰기
 
             while( (line = in.readLine()) != null) {
                 String[] csv = cvsUtil.csvSplit(line);
