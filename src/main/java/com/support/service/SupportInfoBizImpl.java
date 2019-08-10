@@ -26,14 +26,14 @@ public class SupportInfoBizImpl implements SupportInfoBiz {
         List<SupportInfoTable> supportInfoTableList = supportInfoRepository.findAll();
         List<SupportInfoDto> supportInfoDtoList = new ArrayList<>();
 
-        for(SupportInfoTable supportInfoTable : supportInfoTableList) {
+        for (SupportInfoTable supportInfoTable : supportInfoTableList) {
             supportInfoDtoList.add(convertDateToSupportInfoDto(supportInfoTable));
         }
         return supportInfoDtoList;
     }
 
     @Override
-    public void insertSupportInfoTable(String[] csv) {
+    public SupportInfoTable insertSupportInfoTable(String[] csv) {
         SupportInfoTable supportInfoTable = new SupportInfoTable();
         Municipality municipality = new Municipality();
 
@@ -53,6 +53,8 @@ public class SupportInfoBizImpl implements SupportInfoBiz {
         supportInfoTable.setId("chudaeyoun");
 
         supportInfoRepository.save(supportInfoTable);
+
+        return supportInfoTable;
     }
 
     @Override
@@ -72,6 +74,10 @@ public class SupportInfoBizImpl implements SupportInfoBiz {
         List<SupportInfoTable> supportInfoTableList = supportInfoRepository.findAll();
         List<SortInfoDto> sortInfoDtoList = new ArrayList<>();
         List<String> instituteList = new ArrayList<>();
+
+        if(supportInfoTableList.isEmpty()) {
+            return instituteList;
+        }
 
         for(SupportInfoTable supportInfoTable : supportInfoTableList) {
             String rate = calRate(supportInfoTable.getRate());
@@ -104,6 +110,10 @@ public class SupportInfoBizImpl implements SupportInfoBiz {
         List<SupportInfoTable> supportInfoTableList = supportInfoRepository.findAll();
         List<SortInfoDto> sortInfoDtoList = new ArrayList<>();
         List<String> instituteList = new ArrayList<>();
+
+        if(supportInfoTableList.isEmpty()) {
+            return instituteList;
+        }
 
         for(SupportInfoTable supportInfoTable : supportInfoTableList) {
             String limit = calLimit(supportInfoTable.getLimit());

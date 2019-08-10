@@ -8,7 +8,7 @@ import java.util.List;
 public interface SupportInfoBiz {
     List<SupportInfoDto> getAllSupportInfoList(); // 지원하는 지자체 목록 검색(all)
 
-    void insertSupportInfoTable(String[] csv);
+    SupportInfoTable insertSupportInfoTable(String[] csv);
 
     SupportInfoDto getSupportInfoByCode(String code);
 
