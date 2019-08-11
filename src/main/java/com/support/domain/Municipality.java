@@ -1,8 +1,6 @@
 package com.support.domain;
 
 import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -20,5 +18,4 @@ public class Municipality {
 
     @Column(name = "REGION", nullable = false, length = 20)
     private String region;    // 지자체명
-
 }

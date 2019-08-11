@@ -61,7 +61,7 @@ public class SupportInfoApiControllerTest {
     private SupportInfoRepository supportInfoRepository;
 
     @Test
-     public void singleFileUpload() throws Exception {
+    public void singleFileUpload() throws Exception {
         // given
         SupportInfoTable supportInfoTable = supportInfoBiz.insertSupportInfoTable(getCsv());
         given(supportInfoBiz.insertSupportInfoTable(getCsv())).willReturn(supportInfoTable);
@@ -83,11 +83,11 @@ public class SupportInfoApiControllerTest {
     }
 
     @Test
-    public void getAllSupportInfoList_OK_TEST() throws Exception{
+    public void getAllSupportInfoList_OK_TEST() throws Exception {
         // given
         List<SupportInfoTable> supportInfoTableList = getSupportInfoTables(5);
         List<SupportInfoDto> supportInfoDtoList = new ArrayList<>();
-        for(SupportInfoTable supportInfoTable : supportInfoTableList) {
+        for (SupportInfoTable supportInfoTable : supportInfoTableList) {
             supportInfoDtoList.add(convertDateToSupportInfoDto(supportInfoTable));
         }
         given(supportInfoBiz.getAllSupportInfoList()).willReturn(supportInfoDtoList);
@@ -103,7 +103,7 @@ public class SupportInfoApiControllerTest {
     }
 
     @Test
-    public void getAllSupportInfoList_NO_CONTENT_TEST() throws Exception{
+    public void getAllSupportInfoList_NO_CONTENT_TEST() throws Exception {
         // given
         given(supportInfoBiz.getAllSupportInfoList()).willReturn(new ArrayList<>());
 
@@ -118,7 +118,7 @@ public class SupportInfoApiControllerTest {
     }
 
     @Test
-    public void getSupportInfo_OK_TEST() throws  Exception {
+    public void getSupportInfo_OK_TEST() throws Exception {
         // given
         SupportInfoTable supportInfoTable = getSupportInfoTables(1).get(0);
         SupportInfoDto supportInfoDto = new SupportInfoDto();
@@ -143,10 +143,9 @@ public class SupportInfoApiControllerTest {
     }
 
     @Test
-    public void getSupportInfo_NO_CONTENT_TEST() throws  Exception {
+    public void getSupportInfo_NO_CONTENT_TEST() throws Exception {
         // given
         given(supportInfoBiz.getSupportInfoByCode("1234")).willReturn(new SupportInfoDto());
-
 
 
         JsonObject municipality = new JsonObject();
@@ -164,7 +163,7 @@ public class SupportInfoApiControllerTest {
     }
 
     @Test
-    public void getSupportInfo_BAD_REQUEST_TEST() throws  Exception {
+    public void getSupportInfo_BAD_REQUEST_TEST() throws Exception {
         // given
         given(supportInfoBiz.getSupportInfoByCode("")).willReturn(new SupportInfoDto());
 
@@ -179,7 +178,7 @@ public class SupportInfoApiControllerTest {
     }
 
     @Test
-    public void updateSupportInfo()  throws  Exception {
+    public void updateSupportInfo() throws Exception {
         // given
         List<SupportInfoTable> supportInfoTableList = getSupportInfoTables(1);
         List<SupportInfoDto> supportInfoDtoList = new ArrayList<>();
@@ -203,7 +202,7 @@ public class SupportInfoApiControllerTest {
     }
 
     @Test
-    public void searchRegionLimitDescByCnt() throws  Exception {
+    public void searchRegionLimitDescByCnt() throws Exception {
         //given
         List<String> instituteList = supportInfoBiz.searchRegionLimitDescByCnt(3);
         given(supportInfoBiz.searchRegionLimitDescByCnt(3)).willReturn(instituteList);
@@ -219,7 +218,7 @@ public class SupportInfoApiControllerTest {
     }
 
     @Test
-    public void searchInstituteByMinRate() throws  Exception {
+    public void searchInstituteByMinRate() throws Exception {
         //given
         List<String> instituteList = supportInfoBiz.searchInstituteByMinRate();
         given(supportInfoBiz.searchInstituteByMinRate()).willReturn(instituteList);
@@ -237,12 +236,12 @@ public class SupportInfoApiControllerTest {
     private List<SupportInfoTable> getSupportInfoTables(int createCnt) {
         List<SupportInfoTable> supportInfoTableList = new ArrayList<>();
 
-        for(int i = 1;  i <= createCnt; i++) {
+        for (int i = 1; i <= createCnt; i++) {
             SupportInfoTable supportInfoTable = new SupportInfoTable();
             Municipality municipality = new Municipality();
 
             municipality.setCode(i + "");
-            municipality.setRegion(String.valueOf((char)('A' + i)));
+            municipality.setRegion(String.valueOf((char) ('A' + i)));
 
             supportInfoTable.setMunicipality(municipality);
             supportInfoTable.setCode(i + "");
@@ -274,7 +273,7 @@ public class SupportInfoApiControllerTest {
         return supportInfoTableList;
     }
 
-    private SupportInfoDto convertDateToSupportInfoDto(SupportInfoTable supportInfoTable ) {
+    private SupportInfoDto convertDateToSupportInfoDto(SupportInfoTable supportInfoTable) {
         SupportInfoDto supportInfoDto = new SupportInfoDto();
 
         supportInfoDto.setRegion(supportInfoTable.getMunicipality().getRegion());

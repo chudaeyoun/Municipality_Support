@@ -2,7 +2,7 @@ package com.support.util;
 
 public class CvsUtil {
 
-    //csv 콤마로 구분하여 짜르기
+    // csv 콤마로 구분하여 자르기
     public String[] csvSplit(String str) {
         String[] resultStr = null;
         String result = "";

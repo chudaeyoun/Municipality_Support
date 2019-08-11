@@ -5,8 +5,6 @@ import com.support.repository.MunicipalityRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-
 @Service
 public class MunicipalityBizImpl implements MunicipalityBiz {
 
@@ -27,5 +25,4 @@ public class MunicipalityBizImpl implements MunicipalityBiz {
     public Municipality getMunicipalityRegion(String region) {
         return municipalityRepository.findByRegion(region);
     }
-
 }

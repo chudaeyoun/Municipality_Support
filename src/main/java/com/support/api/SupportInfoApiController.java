@@ -41,7 +41,7 @@ public class SupportInfoApiController {
     private MunicipalityBiz municipalityBiz;
 
     @PostMapping("/uploadCsvFile")
-     public ResponseEntity<String> singleFileUpload(@RequestParam("file") MultipartFile file) throws IOException {
+    public ResponseEntity<String> singleFileUpload(@RequestParam("file") MultipartFile file) throws IOException {
         if (file.isEmpty()) {
             logger.error("파일을 확인해주세요.");
             return new ResponseEntity(new BizException("파일을 확인해주세요."), HttpStatus.BAD_REQUEST);
@@ -57,13 +57,13 @@ public class SupportInfoApiController {
 
             in.readLine(); // 첫 줄 건너 뛰기
 
-            while( (line = in.readLine()) != null) {
+            while ((line = in.readLine()) != null) {
                 String[] csv = cvsUtil.csvSplit(line);
 
                 //지자체명으로 지자체테이블 검색. 없으면 insert, 있으면 updata
                 Municipality municipality = municipalityBiz.getMunicipalityRegion(csv[1]);
 
-                if(municipality == null) {
+                if (municipality == null) {
                     boolean existCheck = true;
 
                     for (int checkCnt = 0; checkCnt < 10; checkCnt++) {

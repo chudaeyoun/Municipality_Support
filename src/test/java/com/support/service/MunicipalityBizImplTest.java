@@ -18,7 +18,7 @@ import static org.mockito.BDDMockito.given;
 public class MunicipalityBizImplTest {
 
     @Autowired
-    private  MunicipalityBizImpl municipalityBizImpl;
+    private MunicipalityBizImpl municipalityBizImpl;
 
     @MockBean
     private MunicipalityRepository municipalityRepository;
@@ -28,7 +28,7 @@ public class MunicipalityBizImplTest {
         Municipality testMunicipality = getMunicipality(1);
         boolean expected = false;
         given(municipalityRepository.existsByCode(testMunicipality.getCode())).willReturn(expected);
-        boolean existBool =  municipalityBizImpl.existsMunicipalityCode("test1111");
+        boolean existBool = municipalityBizImpl.existsMunicipalityCode("test1111");
         assertThat(existBool).isEqualTo(expected);
     }
 
@@ -37,7 +37,7 @@ public class MunicipalityBizImplTest {
         Municipality testMunicipality = getMunicipality(1);
         boolean expected = true;
         given(municipalityRepository.existsByRegion(testMunicipality.getRegion())).willReturn(expected);
-        boolean existBool =  municipalityBizImpl.existsMunicipalityRegion("강릉시");
+        boolean existBool = municipalityBizImpl.existsMunicipalityRegion("강릉시");
         assertThat(existBool).isEqualTo(expected);
     }
 
@@ -45,14 +45,14 @@ public class MunicipalityBizImplTest {
     public void getMunicipalityRegion() {
         Municipality expected = getMunicipality(1);
         given(municipalityRepository.findByRegion(expected.getRegion())).willReturn(expected);
-        Municipality municipality =  municipalityBizImpl.getMunicipalityRegion("강릉시");
+        Municipality municipality = municipalityBizImpl.getMunicipalityRegion("강릉시");
         assertThat(municipality).isEqualTo(expected);
     }
 
     private Municipality getMunicipality(int testcase) {
         Municipality municipality = new Municipality();
 
-        switch(testcase) {
+        switch (testcase) {
             case 1:
                 municipality.setRegion("강릉시");
                 municipality.setCode("test1111");

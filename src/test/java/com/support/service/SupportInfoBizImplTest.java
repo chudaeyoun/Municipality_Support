@@ -41,7 +41,7 @@ public class SupportInfoBizImplTest {
         List<SupportInfoDto> supportInfoDtoList = supportInfoBizImpl.getAllSupportInfoList();
         List<SupportInfoDto> dtoExpected = new ArrayList<>();
 
-        for(SupportInfoTable supportInfoTable : expected) {
+        for (SupportInfoTable supportInfoTable : expected) {
             dtoExpected.add(convertDateToSupportInfoDto(supportInfoTable));
         }
         assertThat(supportInfoDtoList).isEqualTo(dtoExpected);
@@ -59,7 +59,7 @@ public class SupportInfoBizImplTest {
     public void getSupportInfoByCode() {
         SupportInfoTable expected = getSupportInfoTables(1).get(0);
         given(supportInfoRepository.findByCode(expected.getCode())).willReturn(expected);
-        SupportInfoDto supportInfoDto =  supportInfoBizImpl.getSupportInfoByCode("1");
+        SupportInfoDto supportInfoDto = supportInfoBizImpl.getSupportInfoByCode("1");
         SupportInfoDto dtoExpected = convertDateToSupportInfoDto(expected);
         assertThat(supportInfoDto).isEqualTo(dtoExpected);
     }
@@ -79,7 +79,7 @@ public class SupportInfoBizImplTest {
         List<SortInfoDto> sortInfoDtoList = new ArrayList<>();
         List<String> expected = new ArrayList<>();
 
-        for(SupportInfoTable supportInfoTable : supportInfoTableList) {
+        for (SupportInfoTable supportInfoTable : supportInfoTableList) {
             String rate = calRate(supportInfoTable.getRate());
             SortInfoDto sortInfoDto = new SortInfoDto();
 
@@ -94,10 +94,10 @@ public class SupportInfoBizImplTest {
 
         // 최소가 여러 개 있을 수도 있으니 리스트로 반환
         double minRate = sortInfoDtoList.get(0).getRate();
-        for(SortInfoDto sortInfoDto : sortInfoDtoList) {
-            if(minRate == sortInfoDto.getRate()) {
+        for (SortInfoDto sortInfoDto : sortInfoDtoList) {
+            if (minRate == sortInfoDto.getRate()) {
                 expected.add(sortInfoDto.getInstitute());
-            } else{
+            } else {
                 break;
             }
         }
@@ -114,7 +114,7 @@ public class SupportInfoBizImplTest {
         List<String> expected = new ArrayList<>();
         int cnt = 3;
 
-        for(SupportInfoTable supportInfoTable : supportInfoTableList) {
+        for (SupportInfoTable supportInfoTable : supportInfoTableList) {
             String limit = calLimit(supportInfoTable.getLimit());
             String rate = calRate(supportInfoTable.getRate());
             SortInfoDto sortInfoDto = new SortInfoDto();
@@ -133,10 +133,10 @@ public class SupportInfoBizImplTest {
 
         cnt = Math.min(cnt, sortInfoDtoList.size());
 
-        for(SortInfoDto sortInfo : sortInfoDtoList) {
+        for (SortInfoDto sortInfo : sortInfoDtoList) {
             expected.add(sortInfo.getInstitute());
             cnt--;
-            if(cnt == 0) {
+            if (cnt == 0) {
                 break;
             }
         }
@@ -169,7 +169,7 @@ public class SupportInfoBizImplTest {
         return supportInfoTable;
     }
 
-    private SupportInfoDto convertDateToSupportInfoDto(SupportInfoTable supportInfoTable ) {
+    private SupportInfoDto convertDateToSupportInfoDto(SupportInfoTable supportInfoTable) {
         SupportInfoDto supportInfoDto = new SupportInfoDto();
 
         supportInfoDto.setRegion(supportInfoTable.getMunicipality().getRegion());
@@ -206,10 +206,18 @@ public class SupportInfoBizImplTest {
         String unit = splitLimit.replaceAll("[0-9]", "");
 
         switch (unit) {
-            case "백만원" : num = num + "000000"; break;
-            case "천만원" : num = num + "0000000"; break;
-            case "억원" : num = num + "00000000"; break;
-            default : num = "0"; break;
+            case "백만원":
+                num = num + "000000";
+                break;
+            case "천만원":
+                num = num + "0000000";
+                break;
+            case "억원":
+                num = num + "00000000";
+                break;
+            default:
+                num = "0";
+                break;
         }
         return num;
     }
@@ -217,12 +225,12 @@ public class SupportInfoBizImplTest {
     private List<SupportInfoTable> getSupportInfoTables(int createCnt) {
         List<SupportInfoTable> supportInfoTableList = new ArrayList<>();
 
-        for(int i = 1;  i <= createCnt; i++) {
+        for (int i = 1; i <= createCnt; i++) {
             SupportInfoTable supportInfoTable = new SupportInfoTable();
             Municipality municipality = new Municipality();
 
             municipality.setCode(i + "");
-            municipality.setRegion(String.valueOf((char)('A' + i)));
+            municipality.setRegion(String.valueOf((char) ('A' + i)));
 
             supportInfoTable.setMunicipality(municipality);
             supportInfoTable.setCode(i + "");

@@ -5,7 +5,6 @@ import com.support.domain.SortInfoDto;
 import com.support.domain.SupportInfoDto;
 import com.support.domain.SupportInfoTable;
 import com.support.repository.SupportInfoRepository;
-import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -75,11 +74,11 @@ public class SupportInfoBizImpl implements SupportInfoBiz {
         List<SortInfoDto> sortInfoDtoList = new ArrayList<>();
         List<String> instituteList = new ArrayList<>();
 
-        if(supportInfoTableList.isEmpty()) {
+        if (supportInfoTableList.isEmpty()) {
             return instituteList;
         }
 
-        for(SupportInfoTable supportInfoTable : supportInfoTableList) {
+        for (SupportInfoTable supportInfoTable : supportInfoTableList) {
             String rate = calRate(supportInfoTable.getRate());
             SortInfoDto sortInfoDto = new SortInfoDto();
 
@@ -90,14 +89,14 @@ public class SupportInfoBizImpl implements SupportInfoBiz {
         }
 
         sortInfoDtoList = sortInfoDtoList.stream().sorted(Comparator.comparing((SortInfoDto::getRate)))
-                                    .collect(Collectors.toList());
+                .collect(Collectors.toList());
 
         // 최소가 여러 개 있을 수도 있으니 리스트로 반환
         double minRate = sortInfoDtoList.get(0).getRate();
-        for(SortInfoDto sortInfoDto : sortInfoDtoList) {
-            if(minRate == sortInfoDto.getRate()) {
+        for (SortInfoDto sortInfoDto : sortInfoDtoList) {
+            if (minRate == sortInfoDto.getRate()) {
                 instituteList.add(sortInfoDto.getInstitute());
-            } else{
+            } else {
                 break;
             }
         }
@@ -111,11 +110,11 @@ public class SupportInfoBizImpl implements SupportInfoBiz {
         List<SortInfoDto> sortInfoDtoList = new ArrayList<>();
         List<String> instituteList = new ArrayList<>();
 
-        if(supportInfoTableList.isEmpty()) {
+        if (supportInfoTableList.isEmpty()) {
             return instituteList;
         }
 
-        for(SupportInfoTable supportInfoTable : supportInfoTableList) {
+        for (SupportInfoTable supportInfoTable : supportInfoTableList) {
             String limit = calLimit(supportInfoTable.getLimit());
             String rate = calRate(supportInfoTable.getRate());
             SortInfoDto sortInfoDto = new SortInfoDto();
@@ -134,10 +133,10 @@ public class SupportInfoBizImpl implements SupportInfoBiz {
 
         cnt = Math.min(cnt, sortInfoDtoList.size());
 
-        for(SortInfoDto sortInfo : sortInfoDtoList) {
+        for (SortInfoDto sortInfo : sortInfoDtoList) {
             instituteList.add(sortInfo.getInstitute());
             cnt--;
-            if(cnt == 0) {
+            if (cnt == 0) {
                 break;
             }
         }
@@ -168,7 +167,7 @@ public class SupportInfoBizImpl implements SupportInfoBiz {
         return supportInfoTable;
     }
 
-    private SupportInfoDto convertDateToSupportInfoDto(SupportInfoTable supportInfoTable ) {
+    private SupportInfoDto convertDateToSupportInfoDto(SupportInfoTable supportInfoTable) {
         SupportInfoDto supportInfoDto = new SupportInfoDto();
 
         supportInfoDto.setRegion(supportInfoTable.getMunicipality().getRegion());
@@ -205,10 +204,18 @@ public class SupportInfoBizImpl implements SupportInfoBiz {
         String unit = splitLimit.replaceAll("[0-9]", "");
 
         switch (unit) {
-            case "백만원" : num = num + "000000"; break;
-            case "천만원" : num = num + "0000000"; break;
-            case "억원" : num = num + "00000000"; break;
-            default : num = "0"; break;
+            case "백만원":
+                num = num + "000000";
+                break;
+            case "천만원":
+                num = num + "0000000";
+                break;
+            case "억원":
+                num = num + "00000000";
+                break;
+            default:
+                num = "0";
+                break;
         }
         return num;
     }
