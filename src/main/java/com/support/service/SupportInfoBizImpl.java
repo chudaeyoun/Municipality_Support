@@ -5,6 +5,7 @@ import com.support.domain.SortInfoDto;
 import com.support.domain.SupportInfoDto;
 import com.support.domain.SupportInfoTable;
 import com.support.repository.SupportInfoRepository;
+import org.assertj.core.util.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,7 +24,7 @@ public class SupportInfoBizImpl implements SupportInfoBiz {
     @Override
     public List<SupportInfoDto> getAllSupportInfoList() {
         List<SupportInfoTable> supportInfoTableList = supportInfoRepository.findAll();
-        List<SupportInfoDto> supportInfoDtoList = new ArrayList<>();
+        List<SupportInfoDto> supportInfoDtoList = Lists.newArrayList();
 
         for (SupportInfoTable supportInfoTable : supportInfoTableList) {
             supportInfoDtoList.add(convertDateToSupportInfoDto(supportInfoTable));
@@ -71,8 +72,8 @@ public class SupportInfoBizImpl implements SupportInfoBiz {
     @Override
     public List<String> searchInstituteByMinRate() {
         List<SupportInfoTable> supportInfoTableList = supportInfoRepository.findAll();
-        List<SortInfoDto> sortInfoDtoList = new ArrayList<>();
-        List<String> instituteList = new ArrayList<>();
+        List<SortInfoDto> sortInfoDtoList = Lists.newArrayList();
+        List<String> instituteList = Lists.newArrayList();
 
         if (supportInfoTableList.isEmpty()) {
             return instituteList;
@@ -107,8 +108,8 @@ public class SupportInfoBizImpl implements SupportInfoBiz {
     @Override
     public List<String> searchRegionLimitDescByCnt(int cnt) {
         List<SupportInfoTable> supportInfoTableList = supportInfoRepository.findAll();
-        List<SortInfoDto> sortInfoDtoList = new ArrayList<>();
-        List<String> instituteList = new ArrayList<>();
+        List<SortInfoDto> sortInfoDtoList = Lists.newArrayList();
+        List<String> instituteList = Lists.newArrayList();
 
         if (supportInfoTableList.isEmpty()) {
             return instituteList;

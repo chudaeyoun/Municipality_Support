@@ -37,15 +37,15 @@ public class MunicipalityBizImplTest {
         Municipality testMunicipality = getMunicipality(1);
         boolean expected = true;
         given(municipalityRepository.existsByRegion(testMunicipality.getRegion())).willReturn(expected);
-        boolean existBool = municipalityBizImpl.existsMunicipalityRegion("강릉시");
+        boolean existBool = municipalityBizImpl.existsMunicipalityRegion(testMunicipality.getRegion());
         assertThat(existBool).isEqualTo(expected);
     }
 
     @Test
     public void getMunicipalityRegion() {
-        Municipality expected = getMunicipality(1);
+        Municipality expected = getMunicipality(2);
         given(municipalityRepository.findByRegion(expected.getRegion())).willReturn(expected);
-        Municipality municipality = municipalityBizImpl.getMunicipalityRegion("강릉시");
+        Municipality municipality = municipalityBizImpl.getMunicipalityRegion(expected.getRegion());
         assertThat(municipality).isEqualTo(expected);
     }
 

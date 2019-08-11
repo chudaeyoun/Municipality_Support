@@ -13,6 +13,7 @@ import com.support.service.MunicipalityBiz;
 import com.support.service.SupportInfoBiz;
 import com.support.util.BizException;
 import com.support.util.CvsUtil;
+import org.assertj.core.util.Lists;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -60,6 +61,9 @@ public class SupportInfoApiControllerTest {
     @MockBean
     private SupportInfoRepository supportInfoRepository;
 
+    @MockBean
+    private MunicipalityRepository municipalityRepository;
+
     @Test
     public void singleFileUpload() throws Exception {
         // given
@@ -86,7 +90,7 @@ public class SupportInfoApiControllerTest {
     public void getAllSupportInfoList_OK_TEST() throws Exception {
         // given
         List<SupportInfoTable> supportInfoTableList = getSupportInfoTables(5);
-        List<SupportInfoDto> supportInfoDtoList = new ArrayList<>();
+        List<SupportInfoDto> supportInfoDtoList = Lists.newArrayList();
         for (SupportInfoTable supportInfoTable : supportInfoTableList) {
             supportInfoDtoList.add(convertDateToSupportInfoDto(supportInfoTable));
         }
@@ -105,7 +109,7 @@ public class SupportInfoApiControllerTest {
     @Test
     public void getAllSupportInfoList_NO_CONTENT_TEST() throws Exception {
         // given
-        given(supportInfoBiz.getAllSupportInfoList()).willReturn(new ArrayList<>());
+        given(supportInfoBiz.getAllSupportInfoList()).willReturn(Lists.newArrayList());
 
         // when
         MockHttpServletResponse response = mvc.perform(
@@ -121,14 +125,12 @@ public class SupportInfoApiControllerTest {
     public void getSupportInfo_OK_TEST() throws Exception {
         // given
         SupportInfoTable supportInfoTable = getSupportInfoTables(1).get(0);
-        SupportInfoDto supportInfoDto = new SupportInfoDto();
-        given(supportInfoRepository.save(supportInfoTable)).willReturn(supportInfoTable);
+        SupportInfoDto supportInfoDto = convertDateToSupportInfoDto(supportInfoTable);
+        supportInfoRepository.save(supportInfoTable);
         given(supportInfoBiz.getSupportInfoByCode(supportInfoTable.getCode())).willReturn(supportInfoDto);
 
-        supportInfoRepository.save(supportInfoTable);
-        supportInfoBiz.updateSupportInfo(supportInfoDto, supportInfoTable.getCode());
-
         JsonObject municipality = new JsonObject();
+        municipality.addProperty("code", supportInfoTable.getMunicipality().getCode());
         municipality.addProperty("region", supportInfoTable.getMunicipality().getRegion());
 
         // when
@@ -180,37 +182,43 @@ public class SupportInfoApiControllerTest {
     @Test
     public void updateSupportInfo() throws Exception {
         // given
-        List<SupportInfoTable> supportInfoTableList = getSupportInfoTables(1);
-        List<SupportInfoDto> supportInfoDtoList = new ArrayList<>();
-        supportInfoDtoList.add(convertDateToSupportInfoDto(supportInfoTableList.get(0)));
-        given(supportInfoBiz.getAllSupportInfoList()).willReturn(supportInfoDtoList);
+        SupportInfoTable supportInfoTable = getSupportInfoTables(1).get(0);
+        SupportInfoDto supportInfoDto = convertDateToSupportInfoDto(supportInfoTable);
+        supportInfoRepository.save(supportInfoTable);
+        given(supportInfoBiz.updateSupportInfo(supportInfoDto, supportInfoTable.getCode())).willReturn(supportInfoDto);
 
-        JsonObject supportInfoDto = new JsonObject();
-        supportInfoDto.addProperty("region", "B");
-        supportInfoDto.addProperty("target", "지원대상");
-        supportInfoDto.addProperty("usage", "운전");
-        supportInfoDto.addProperty("limit", "1억원 이내");
-        supportInfoDto.addProperty("rate", "1%");
-        supportInfoDto.addProperty("institute", "추천기관");
-        supportInfoDto.addProperty("mgmt", "관리점");
-        supportInfoDto.addProperty("reception", "취급점");
+        JsonObject json = new JsonObject();
+        json.addProperty("region", "B");
+        json.addProperty("target", "지원대상");
+        json.addProperty("usage", "운전");
+        json.addProperty("limit", "1억원 이내");
+        json.addProperty("rate", "1%");
+        json.addProperty("institute", "추천기관");
+        json.addProperty("mgmt", "관리점");
+        json.addProperty("reception", "취급점");
 
         mvc.perform(
                 post("/api/supportInfo/updateSupportInfo")
                         .contentType("application/json")
-                        .content(supportInfoDto.toString())).andExpect(status().isOk());
+                        .content(json.toString())).andExpect(status().isOk());
     }
 
     @Test
     public void searchRegionLimitDescByCnt() throws Exception {
         //given
-        List<String> instituteList = supportInfoBiz.searchRegionLimitDescByCnt(3);
-        given(supportInfoBiz.searchRegionLimitDescByCnt(3)).willReturn(instituteList);
+        SupportInfoTable supportInfoTable = getSupportInfoTables(1).get(0);
+        List<String> instituteList = Lists.newArrayList();
+        instituteList.add(supportInfoTable.getMunicipality().getRegion());
+        given(supportInfoBiz.searchRegionLimitDescByCnt(1)).willReturn(instituteList);
+
+        JsonObject json = new JsonObject();
+        json.addProperty("cnt", "1");
 
         // when
         MockHttpServletResponse response = mvc.perform(
                 get("/api/supportInfo/searchRegionLimitDescByCnt")
-                        .accept(MediaType.APPLICATION_JSON))
+                        .contentType("application/json")
+                        .content(json.toString()))
                 .andReturn().getResponse();
 
         // then
@@ -220,7 +228,9 @@ public class SupportInfoApiControllerTest {
     @Test
     public void searchInstituteByMinRate() throws Exception {
         //given
-        List<String> instituteList = supportInfoBiz.searchInstituteByMinRate();
+        SupportInfoTable supportInfoTable = getSupportInfoTables(1).get(0);
+        List<String> instituteList = Lists.newArrayList();
+        instituteList.add(supportInfoTable.getMunicipality().getRegion());
         given(supportInfoBiz.searchInstituteByMinRate()).willReturn(instituteList);
 
         // when
@@ -234,7 +244,7 @@ public class SupportInfoApiControllerTest {
     }
 
     private List<SupportInfoTable> getSupportInfoTables(int createCnt) {
-        List<SupportInfoTable> supportInfoTableList = new ArrayList<>();
+        List<SupportInfoTable> supportInfoTableList = Lists.newArrayList();
 
         for (int i = 1; i <= createCnt; i++) {
             SupportInfoTable supportInfoTable = new SupportInfoTable();
@@ -256,18 +266,6 @@ public class SupportInfoApiControllerTest {
             supportInfoTable.setId("chudaeyoun");
 
             supportInfoTableList.add(supportInfoTable);
-            /*
-            SupportInfoDto supportInfoDto = new SupportInfoDto();
-
-            supportInfoDto.setRegion(String.valueOf((char)('A' + i)));
-            supportInfoDto.setTarget("지원대상");
-            supportInfoDto.setUsage("운전");
-            supportInfoDto.setLimit(i + "억원 이내");
-            supportInfoDto.setRate(i + "%");
-            supportInfoDto.setInstitute("추천기관");
-            supportInfoDto.setMgmt("관리점");
-            supportInfoDto.setReception("취급점");
-            */
         }
 
         return supportInfoTableList;

@@ -6,6 +6,7 @@ import com.support.domain.SupportInfoDto;
 import com.support.domain.SupportInfoTable;
 import com.support.repository.SupportInfoRepository;
 import lombok.Data;
+import org.assertj.core.util.Lists;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,7 +40,7 @@ public class SupportInfoBizImplTest {
         List<SupportInfoTable> expected = getSupportInfoTables(5);
         given(supportInfoRepository.findAll()).willReturn(expected);
         List<SupportInfoDto> supportInfoDtoList = supportInfoBizImpl.getAllSupportInfoList();
-        List<SupportInfoDto> dtoExpected = new ArrayList<>();
+        List<SupportInfoDto> dtoExpected = Lists.newArrayList();
 
         for (SupportInfoTable supportInfoTable : expected) {
             dtoExpected.add(convertDateToSupportInfoDto(supportInfoTable));
@@ -76,8 +77,8 @@ public class SupportInfoBizImplTest {
     @Test
     public void searchInstituteByMinRate() {
         List<SupportInfoTable> supportInfoTableList = getSupportInfoTables(5);
-        List<SortInfoDto> sortInfoDtoList = new ArrayList<>();
-        List<String> expected = new ArrayList<>();
+        List<SortInfoDto> sortInfoDtoList = Lists.newArrayList();
+        List<String> expected = Lists.newArrayList();
 
         for (SupportInfoTable supportInfoTable : supportInfoTableList) {
             String rate = calRate(supportInfoTable.getRate());
@@ -110,8 +111,8 @@ public class SupportInfoBizImplTest {
     @Test
     public void searchRegionLimitDescByCnt() {
         List<SupportInfoTable> supportInfoTableList = getSupportInfoTables(5);
-        List<SortInfoDto> sortInfoDtoList = new ArrayList<>();
-        List<String> expected = new ArrayList<>();
+        List<SortInfoDto> sortInfoDtoList = Lists.newArrayList();
+        List<String> expected = Lists.newArrayList();
         int cnt = 3;
 
         for (SupportInfoTable supportInfoTable : supportInfoTableList) {
@@ -223,7 +224,7 @@ public class SupportInfoBizImplTest {
     }
 
     private List<SupportInfoTable> getSupportInfoTables(int createCnt) {
-        List<SupportInfoTable> supportInfoTableList = new ArrayList<>();
+        List<SupportInfoTable> supportInfoTableList = Lists.newArrayList();
 
         for (int i = 1; i <= createCnt; i++) {
             SupportInfoTable supportInfoTable = new SupportInfoTable();

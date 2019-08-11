@@ -12,7 +12,6 @@ import com.support.util.CvsUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -47,7 +46,6 @@ public class SupportInfoApiController {
             return new ResponseEntity(new BizException("파일을 확인해주세요."), HttpStatus.BAD_REQUEST);
         }
 
-        List<String[]> csvList = new ArrayList<>();
         CvsUtil cvsUtil = new CvsUtil();
         String line = null;
 
@@ -135,7 +133,7 @@ public class SupportInfoApiController {
         }
     }
 
-    @PutMapping("/updateSupportInfo")
+    @PostMapping("/updateSupportInfo")
     public ResponseEntity<SupportInfoDto> updateSupportInfo(@RequestBody SupportInfoDto supportInfoDto) {
         if (supportInfoDto == null) {
             logger.error("파라미터 확인을 해주세요. 지원 지자체 정보 => null");
