@@ -39,7 +39,7 @@ public class SupportInfoApiController {
     @Autowired
     private MunicipalityBiz municipalityBiz;
 
-    @PostMapping("/uploadCsvFile")
+    @PostMapping("/files")
     public ResponseEntity<String> singleFileUpload(@RequestParam("file") MultipartFile file) {
         if (file.isEmpty()) {
             logger.error("파일을 확인해주세요.");
@@ -88,7 +88,7 @@ public class SupportInfoApiController {
         }
     }
 
-    @GetMapping("/list")
+    @GetMapping("/lists")
     public ResponseEntity<List<SupportInfoDto>> getAllSupportInfoList() {
         try {
             List<SupportInfoDto> SupportInfoDtoList = supportInfoBiz.getAllSupportInfoList();
@@ -102,19 +102,17 @@ public class SupportInfoApiController {
         }
     }
 
-    @GetMapping("/searchRegion")
-    public ResponseEntity<SupportInfoDto> getSupportInfo(@RequestBody Municipality municipality) {
-        if (municipality == null) {
+    @GetMapping("/infos")
+    public ResponseEntity<SupportInfoDto> getSupportInfo(@RequestParam("region") JsonParser region) {
+        if (region == null) {
             logger.error("파라미터 확인을 해주세요. param {region} => null");
             return new ResponseEntity(new BizException("지자체명을 확인해주세요."), HttpStatus.BAD_REQUEST);
         }
 
-        String region = municipality.getRegion();
-
         logger.info("Method : getSupportInfo(), param {region} => " + region);
 
         try {
-            municipality = municipalityBiz.getMunicipalityRegion(region);
+            Municipality municipality = municipalityBiz.getMunicipalityRegion(region.toString());
             if (municipality == null) {
                 return new ResponseEntity(municipality, HttpStatus.NO_CONTENT);
             }
@@ -130,7 +128,7 @@ public class SupportInfoApiController {
         }
     }
 
-    @PostMapping("/updateSupportInfo")
+    @PostMapping("/modified")
     public ResponseEntity<SupportInfoDto> updateSupportInfo(@RequestBody SupportInfoDto supportInfoDto) {
         if (supportInfoDto == null) {
             logger.error("파라미터 확인을 해주세요. 지원 지자체 정보 => null");
@@ -158,7 +156,7 @@ public class SupportInfoApiController {
     }
 
 
-    @GetMapping("/searchRegionLimitDescByCnt")
+    @GetMapping("/limitDesc")
     public ResponseEntity<SupportInfoDto> searchRegionLimitDescByCnt(@RequestBody String json) {
         JsonParser jp = new JsonParser();
         JsonElement je = jp.parse(json);
@@ -184,7 +182,7 @@ public class SupportInfoApiController {
         }
     }
 
-    @GetMapping("/searchInstituteByMinRate")
+    @GetMapping("/leastRate")
     public ResponseEntity<List<String>> searchInstituteByMinRate() {
         try {
             List<String> instituteList = supportInfoBiz.searchInstituteByMinRate();

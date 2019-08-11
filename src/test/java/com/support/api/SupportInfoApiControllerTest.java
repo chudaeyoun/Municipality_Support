@@ -1,41 +1,25 @@
 package com.support.api;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import com.support.domain.Municipality;
 import com.support.domain.SupportInfoDto;
 import com.support.domain.SupportInfoTable;
 import com.support.repository.MunicipalityRepository;
 import com.support.repository.SupportInfoRepository;
-import com.support.service.MunicipalityBiz;
 import com.support.service.SupportInfoBiz;
-import com.support.util.BizException;
-import com.support.util.CvsUtil;
 import org.assertj.core.util.Lists;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.BDDMockito.given;
@@ -47,16 +31,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(SupportInfoApiController.class)
 public class SupportInfoApiControllerTest {
 
-    private static String UPLOADED_FOLDER = "file";
-
     @Autowired
     private MockMvc mvc;
 
     @MockBean
     private SupportInfoBiz supportInfoBiz;
-
-    @MockBean
-    private MunicipalityBiz municipalityBiz;
 
     @MockBean
     private SupportInfoRepository supportInfoRepository;
@@ -81,7 +60,7 @@ public class SupportInfoApiControllerTest {
         supportInfoDto.addProperty("reception", "취급점");
 
         mvc.perform(
-                post("/api/supportInfo/uploadCsvFile")
+                post("/api/supportInfo/files")
                         .contentType("application/json")
                         .content(supportInfoDto.toString())).andExpect(status().isOk());
     }
@@ -98,7 +77,7 @@ public class SupportInfoApiControllerTest {
 
         // when
         MockHttpServletResponse response = mvc.perform(
-                get("/api/supportInfo/list")
+                get("/api/supportInfo/lists")
                         .accept(MediaType.APPLICATION_JSON))
                 .andReturn().getResponse();
 
@@ -113,7 +92,7 @@ public class SupportInfoApiControllerTest {
 
         // when
         MockHttpServletResponse response = mvc.perform(
-                get("/api/supportInfo/list")
+                get("/api/supportInfo/lists")
                         .accept(MediaType.APPLICATION_JSON))
                 .andReturn().getResponse();
 
@@ -135,7 +114,7 @@ public class SupportInfoApiControllerTest {
 
         // when
         MockHttpServletResponse response = mvc.perform(
-                get("/api/supportInfo/searchRegion")
+                get("/api/supportInfo/infos")
                         .contentType("application/json")
                         .content(municipality.toString()))
                 .andReturn().getResponse();
@@ -155,7 +134,7 @@ public class SupportInfoApiControllerTest {
 
         // when
         MockHttpServletResponse response = mvc.perform(
-                get("/api/supportInfo/searchRegion")
+                get("/api/supportInfo/infos")
                         .contentType("application/json")
                         .content(municipality.toString()))
                 .andReturn().getResponse();
@@ -171,7 +150,7 @@ public class SupportInfoApiControllerTest {
 
         // when
         MockHttpServletResponse response = mvc.perform(
-                get("/api/supportInfo/searchRegion")
+                get("/api/supportInfo/infos")
                         .accept(MediaType.APPLICATION_JSON))
                 .andReturn().getResponse();
 
@@ -198,7 +177,7 @@ public class SupportInfoApiControllerTest {
         json.addProperty("reception", "취급점");
 
         mvc.perform(
-                post("/api/supportInfo/updateSupportInfo")
+                post("/api/supportInfo/modified")
                         .contentType("application/json")
                         .content(json.toString())).andExpect(status().isOk());
     }
@@ -216,7 +195,7 @@ public class SupportInfoApiControllerTest {
 
         // when
         MockHttpServletResponse response = mvc.perform(
-                get("/api/supportInfo/searchRegionLimitDescByCnt")
+                get("/api/supportInfo/limitDesc")
                         .contentType("application/json")
                         .content(json.toString()))
                 .andReturn().getResponse();
@@ -235,7 +214,7 @@ public class SupportInfoApiControllerTest {
 
         // when
         MockHttpServletResponse response = mvc.perform(
-                get("/api/supportInfo/searchInstituteByMinRate")
+                get("/api/supportInfo/leastRate")
                         .accept(MediaType.APPLICATION_JSON))
                 .andReturn().getResponse();
 

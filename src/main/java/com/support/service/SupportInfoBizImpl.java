@@ -1,11 +1,11 @@
 package com.support.service;
 
+import com.google.common.collect.Lists;
 import com.support.domain.Municipality;
 import com.support.domain.SortInfoDto;
 import com.support.domain.SupportInfoDto;
 import com.support.domain.SupportInfoTable;
 import com.support.repository.SupportInfoRepository;
-import org.assertj.core.util.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -184,7 +184,9 @@ public class SupportInfoBizImpl implements SupportInfoBiz {
     }
 
     private String calRate(String rate) {
-        if (rate.equals("대출이자 전액")) {
+        if (rate == null || rate.equals("")) {
+            rate = "100.0";
+        } else if ("대출이자 전액" .equals(rate)) {
             rate = "100.0";
         } else {
             String splitRate[] = rate.replaceAll("%", "").split("~");
