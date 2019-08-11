@@ -40,7 +40,7 @@ public class SupportInfoApiController {
     private MunicipalityBiz municipalityBiz;
 
     @PostMapping("/uploadCsvFile")
-    public ResponseEntity<String> singleFileUpload(@RequestParam("file") MultipartFile file) throws IOException {
+    public ResponseEntity<String> singleFileUpload(@RequestParam("file") MultipartFile file) {
         if (file.isEmpty()) {
             logger.error("파일을 확인해주세요.");
             return new ResponseEntity(new BizException("파일을 확인해주세요."), HttpStatus.BAD_REQUEST);
@@ -52,32 +52,29 @@ public class SupportInfoApiController {
         try {
             InputStreamReader inputStreamReader = new InputStreamReader(file.getInputStream(), "MS949");
             BufferedReader in = new BufferedReader(inputStreamReader);
-
             in.readLine(); // 첫 줄 건너 뛰기
 
             while ((line = in.readLine()) != null) {
                 String[] csv = cvsUtil.csvSplit(line);
 
-                //지자체명으로 지자체테이블 검색. 없으면 insert, 있으면 updata
+                // 데이터가 9개의 컬럼이 아닐 경우 패스
+                if (csv.length != 9) {
+                    continue;
+                }
+                // 지자체명으로 지자체테이블 검색. 없으면 insert, 있으면 update
                 Municipality municipality = municipalityBiz.getMunicipalityRegion(csv[1]);
 
                 if (municipality == null) {
-                    boolean existCheck = true;
-
-                    for (int checkCnt = 0; checkCnt < 10; checkCnt++) {
+                    // 랜덤으로 생성된 코드가 db에 없을때까지
+                    while (true) {
                         String code = UUID.randomUUID().toString();
-                        existCheck = municipalityBiz.existsMunicipalityCode(code);
 
-                        if (!existCheck) {
+                        if (!municipalityBiz.existsMunicipalityCode(code)) {
                             csv[0] = code;
                             break;
                         } else {
                             logger.error("duplicate code = " + code);
                         }
-                    }
-
-                    if (existCheck) {
-                        continue;
                     }
                 } else {
                     csv[0] = municipality.getCode();
