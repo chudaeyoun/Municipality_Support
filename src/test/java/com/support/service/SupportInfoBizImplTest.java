@@ -214,7 +214,6 @@ public class SupportInfoBizImplTest {
         return num;
     }
 
-
     private List<SupportInfoTable> getSupportInfoTables(int createCnt) {
         List<SupportInfoTable> supportInfoTableList = new ArrayList<>();
 
@@ -238,20 +237,7 @@ public class SupportInfoBizImplTest {
             supportInfoTable.setId("chudaeyoun");
 
             supportInfoTableList.add(supportInfoTable);
-            /*
-            SupportInfoDto supportInfoDto = new SupportInfoDto();
-
-            supportInfoDto.setRegion(String.valueOf((char)('A' + i)));
-            supportInfoDto.setTarget("지원대상");
-            supportInfoDto.setUsage("운전");
-            supportInfoDto.setLimit(i + "억원 이내");
-            supportInfoDto.setRate(i + "%");
-            supportInfoDto.setInstitute("추천기관");
-            supportInfoDto.setMgmt("관리점");
-            supportInfoDto.setReception("취급점");
-            */
         }
-
         return supportInfoTableList;
     }
 
