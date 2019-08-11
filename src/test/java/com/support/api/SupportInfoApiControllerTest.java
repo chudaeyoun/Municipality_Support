@@ -148,7 +148,6 @@ public class SupportInfoApiControllerTest {
         given(supportInfoBiz.getSupportInfoByCode("1234")).willReturn(new SupportInfoDto());
 
 
-
         JsonObject municipality = new JsonObject();
         municipality.addProperty("region", "1234");
 
