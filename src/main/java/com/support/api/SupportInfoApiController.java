@@ -103,16 +103,18 @@ public class SupportInfoApiController {
     }
 
     @GetMapping("/infos")
-    public ResponseEntity<SupportInfoDto> getSupportInfo(@RequestParam("region") JsonParser region) {
-        if (region == null) {
+    public ResponseEntity<SupportInfoDto> getSupportInfo(@RequestBody Municipality municipality) {
+        if (municipality == null) {
             logger.error("파라미터 확인을 해주세요. param {region} => null");
             return new ResponseEntity(new BizException("지자체명을 확인해주세요."), HttpStatus.BAD_REQUEST);
         }
 
+        String region = municipality.getRegion();
+
         logger.info("Method : getSupportInfo(), param {region} => " + region);
 
         try {
-            Municipality municipality = municipalityBiz.getMunicipalityRegion(region.toString());
+            municipality = municipalityBiz.getMunicipalityRegion(region);
             if (municipality == null) {
                 return new ResponseEntity(municipality, HttpStatus.NO_CONTENT);
             }
@@ -139,7 +141,7 @@ public class SupportInfoApiController {
         try {
             Municipality municipality = municipalityBiz.getMunicipalityRegion(supportInfoDto.getRegion());
             if (municipality == null) {
-                return new ResponseEntity(municipality, HttpStatus.NO_CONTENT);
+                return new ResponseEntity(supportInfoDto, HttpStatus.NO_CONTENT);
             }
 
             //지자체정보로 지자체지원정보 검색. 없을때 예외처리
@@ -195,4 +197,51 @@ public class SupportInfoApiController {
             return new ResponseEntity(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+    @PostMapping("/save")
+    public ResponseEntity<SupportInfoTable> saveSupportInfo(@RequestBody SupportInfoTable supportInfoTable) {
+        if (supportInfoTable == null) {
+            logger.error("파라미터 확인을 해주세요. 지원 지자체 정보 => null");
+            return new ResponseEntity(new BizException("지원 지자체 정보를 확인해주세요."), HttpStatus.BAD_REQUEST);
+        }
+
+        logger.info("Method : saveSupportInfo(), param => " + supportInfoTable);
+
+        try {
+            supportInfoTable = supportInfoBiz.saveSupportInfo(supportInfoTable);
+            if (supportInfoTable == null) {
+                return new ResponseEntity(supportInfoTable, HttpStatus.NO_CONTENT);
+            }
+            return new ResponseEntity(supportInfoTable, HttpStatus.OK);
+        } catch (Exception e) {
+            logger.error(e.getMessage());
+            return new ResponseEntity(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @PostMapping("/recommends")
+    public ResponseEntity<SupportInfoTable> recommendSupportInfo(@RequestBody String input) {
+        if (input == null) {
+            logger.error("파라미터 확인을 해주세요. input => null");
+            return new ResponseEntity(new BizException("input 기사 정보를 확인해주세요."), HttpStatus.BAD_REQUEST);
+        }
+
+        JsonParser jp = new JsonParser();
+        JsonElement je = jp.parse(input);
+        input = je.getAsJsonObject().get("input").getAsString();
+
+        logger.info("Method : recommendSupportInfo(), param => " + input);
+
+        try {
+            SupportInfoDto supportInfoDto = supportInfoBiz.recommendSupportInfo(input);
+            if (supportInfoDto == null) {
+                return new ResponseEntity(supportInfoDto, HttpStatus.NO_CONTENT);
+            }
+            return new ResponseEntity(supportInfoDto, HttpStatus.OK);
+        } catch (Exception e) {
+            logger.error(e.getMessage());
+            return new ResponseEntity(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
 }

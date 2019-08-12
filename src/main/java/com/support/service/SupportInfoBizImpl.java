@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -143,6 +142,18 @@ public class SupportInfoBizImpl implements SupportInfoBiz {
         }
 
         return instituteList;
+    }
+
+    @Override
+    public SupportInfoTable saveSupportInfo(SupportInfoTable supportInfoTable) {
+        return supportInfoRepository.save(supportInfoTable);
+    }
+
+    @Override
+    public SupportInfoDto recommendSupportInfo(String input) {
+
+
+        return null;
     }
 
     private SupportInfoTable convertDateToSupportInfoTable(SupportInfoDto supportInfoDto, String code) {

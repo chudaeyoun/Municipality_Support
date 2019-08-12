@@ -17,7 +17,7 @@ import static org.mockito.BDDMockito.given;
 @SpringBootTest(classes = MunicipalityBizImpl.class)
 public class MunicipalityBizImplTest {
 
-    @Autowired
+    //@Autowired
     private MunicipalityBizImpl municipalityBizImpl;
 
     @MockBean
@@ -28,7 +28,7 @@ public class MunicipalityBizImplTest {
         Municipality testMunicipality = getMunicipality(1);
         boolean expected = false;
         given(municipalityRepository.existsByCode(testMunicipality.getCode())).willReturn(expected);
-        boolean existBool = municipalityBizImpl.existsMunicipalityCode("test1111");
+        boolean existBool = municipalityBizImpl.existsMunicipalityCode(testMunicipality.getCode());
         assertThat(existBool).isEqualTo(expected);
     }
 

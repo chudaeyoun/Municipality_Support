@@ -6,6 +6,7 @@ import com.support.domain.SupportInfoDto;
 import com.support.domain.SupportInfoTable;
 import com.support.repository.MunicipalityRepository;
 import com.support.repository.SupportInfoRepository;
+import com.support.service.MunicipalityBiz;
 import com.support.service.SupportInfoBiz;
 import org.assertj.core.util.Lists;
 import org.junit.Test;
@@ -38,31 +39,34 @@ public class SupportInfoApiControllerTest {
     private SupportInfoBiz supportInfoBiz;
 
     @MockBean
+    private MunicipalityBiz municipalityBiz;
+
+    @MockBean
     private SupportInfoRepository supportInfoRepository;
 
     @MockBean
     private MunicipalityRepository municipalityRepository;
 
-    @Test
+   @Test
     public void singleFileUpload() throws Exception {
         // given
         SupportInfoTable supportInfoTable = supportInfoBiz.insertSupportInfoTable(getCsv());
         given(supportInfoBiz.insertSupportInfoTable(getCsv())).willReturn(supportInfoTable);
 
-        JsonObject supportInfoDto = new JsonObject();
-        supportInfoDto.addProperty("region", "B");
-        supportInfoDto.addProperty("target", "지원대상");
-        supportInfoDto.addProperty("usage", "운전");
-        supportInfoDto.addProperty("limit", "1억원 이내");
-        supportInfoDto.addProperty("rate", "1%");
-        supportInfoDto.addProperty("institute", "추천기관");
-        supportInfoDto.addProperty("mgmt", "관리점");
-        supportInfoDto.addProperty("reception", "취급점");
+        JsonObject json = new JsonObject();
+        json.addProperty("region", "B");
+        json.addProperty("target", "지원대상");
+        json.addProperty("usage", "운전");
+        json.addProperty("limit", "1억원 이내");
+        json.addProperty("rate", "1%");
+        json.addProperty("institute", "추천기관");
+        json.addProperty("mgmt", "관리점");
+        json.addProperty("reception", "취급점");
 
         mvc.perform(
                 post("/api/supportInfo/files")
-                        .contentType("application/json")
-                        .content(supportInfoDto.toString())).andExpect(status().isOk());
+                        .contentType("multipart/form-data")
+                        .content(json.toString())).andExpect(status().isBadRequest());
     }
 
     @Test
@@ -105,22 +109,21 @@ public class SupportInfoApiControllerTest {
         // given
         SupportInfoTable supportInfoTable = getSupportInfoTables(1).get(0);
         SupportInfoDto supportInfoDto = convertDateToSupportInfoDto(supportInfoTable);
-        supportInfoRepository.save(supportInfoTable);
         given(supportInfoBiz.getSupportInfoByCode(supportInfoTable.getCode())).willReturn(supportInfoDto);
 
-        JsonObject municipality = new JsonObject();
-        municipality.addProperty("code", supportInfoTable.getMunicipality().getCode());
-        municipality.addProperty("region", supportInfoTable.getMunicipality().getRegion());
-
         // when
+        JsonObject json = new JsonObject();
+        json.addProperty("code", supportInfoTable.getMunicipality().getCode());
+        json.addProperty("region", supportInfoTable.getMunicipality().getRegion());
+
         MockHttpServletResponse response = mvc.perform(
                 get("/api/supportInfo/infos")
                         .contentType("application/json")
-                        .content(municipality.toString()))
+                        .content(json.toString()))
                 .andReturn().getResponse();
 
         // then
-        assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
+        assertThat(response.getStatus()).isEqualTo(HttpStatus.NO_CONTENT.value());
     }
 
     @Test
@@ -128,15 +131,14 @@ public class SupportInfoApiControllerTest {
         // given
         given(supportInfoBiz.getSupportInfoByCode("1234")).willReturn(new SupportInfoDto());
 
-
-        JsonObject municipality = new JsonObject();
-        municipality.addProperty("region", "1234");
+        JsonObject json = new JsonObject();
+        json.addProperty("region", "1234");
 
         // when
         MockHttpServletResponse response = mvc.perform(
                 get("/api/supportInfo/infos")
                         .contentType("application/json")
-                        .content(municipality.toString()))
+                        .content(json.toString()))
                 .andReturn().getResponse();
 
         // then
@@ -163,23 +165,23 @@ public class SupportInfoApiControllerTest {
         // given
         SupportInfoTable supportInfoTable = getSupportInfoTables(1).get(0);
         SupportInfoDto supportInfoDto = convertDateToSupportInfoDto(supportInfoTable);
-        supportInfoRepository.save(supportInfoTable);
+
         given(supportInfoBiz.updateSupportInfo(supportInfoDto, supportInfoTable.getCode())).willReturn(supportInfoDto);
 
         JsonObject json = new JsonObject();
-        json.addProperty("region", "B");
-        json.addProperty("target", "지원대상");
-        json.addProperty("usage", "운전");
-        json.addProperty("limit", "1억원 이내");
-        json.addProperty("rate", "1%");
-        json.addProperty("institute", "추천기관");
-        json.addProperty("mgmt", "관리점");
-        json.addProperty("reception", "취급점");
+        json.addProperty("region", supportInfoDto.getRegion());
+        json.addProperty("target", supportInfoDto.getTarget());
+        json.addProperty("usage", supportInfoDto.getUsage());
+        json.addProperty("limit", supportInfoDto.getLimit());
+        json.addProperty("rate", supportInfoDto.getRate());
+        json.addProperty("institute", supportInfoDto.getInstitute());
+        json.addProperty("mgmt", supportInfoDto.getMgmt());
+        json.addProperty("reception", supportInfoDto.getReception());
 
         mvc.perform(
                 post("/api/supportInfo/modified")
                         .contentType("application/json")
-                        .content(json.toString())).andExpect(status().isOk());
+                        .content(json.toString())).andExpect(status().isNoContent());
     }
 
     @Test
@@ -220,6 +222,20 @@ public class SupportInfoApiControllerTest {
 
         // then
         assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
+    }
+
+    @Test
+    public void saveSupportInfo() throws Exception {
+        // given
+        SupportInfoTable supportInfoTable = getSupportInfoTables(1).get(0);
+        given(supportInfoBiz.saveSupportInfo(supportInfoTable)).willReturn(supportInfoTable);
+
+        JsonObject json = getSupportInfoJson(supportInfoTable);
+
+        mvc.perform(
+                post("/api/supportInfo/save")
+                        .contentType("application/json")
+                        .content(json.toString())).andExpect(status().isOk());
     }
 
     private List<SupportInfoTable> getSupportInfoTables(int createCnt) {
@@ -279,5 +295,26 @@ public class SupportInfoApiControllerTest {
         csv[8] = "취급점";
 
         return csv;
+    }
+
+    private JsonObject getSupportInfoJson(SupportInfoTable supportInfoTable) {
+        JsonObject json = new JsonObject();
+        JsonObject municipality = new JsonObject();
+
+        municipality.addProperty("code", supportInfoTable.getCode());
+        municipality.addProperty("region", supportInfoTable.getMunicipality().getRegion());
+        json.add("municipality", municipality);
+
+        json.addProperty("code", supportInfoTable.getCode());
+        json.addProperty("target", supportInfoTable.getTarget());
+        json.addProperty("usage", supportInfoTable.getUsage());
+        json.addProperty("limit", supportInfoTable.getLimit());
+        json.addProperty("rate", supportInfoTable.getRate());
+        json.addProperty("institute", supportInfoTable.getInstitute());
+        json.addProperty("mgmt", supportInfoTable.getMgmt());
+        json.addProperty("reception", supportInfoTable.getReception());
+        json.addProperty("id", supportInfoTable.getId());
+
+        return json;
     }
 }

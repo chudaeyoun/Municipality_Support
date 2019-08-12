@@ -17,4 +17,8 @@ public interface SupportInfoBiz {
     List<String> searchInstituteByMinRate();
 
     List<String> searchRegionLimitDescByCnt(int cnt);
+
+    SupportInfoTable saveSupportInfo(SupportInfoTable supportInfoTable);
+
+    SupportInfoDto recommendSupportInfo(String input);
 }

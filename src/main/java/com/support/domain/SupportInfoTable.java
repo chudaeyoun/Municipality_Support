@@ -15,7 +15,7 @@ public class SupportInfoTable extends BaseEntity {
     private Municipality municipality;
 
     @Column(name = "ID", nullable = false, length = 20)
-    private String id;    // 지자체 코드
+    private String id;    // user ID
 
     @Id
     @Column(name = "CODE", nullable = false, length = 100)
