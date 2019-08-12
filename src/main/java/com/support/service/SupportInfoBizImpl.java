@@ -151,9 +151,14 @@ public class SupportInfoBizImpl implements SupportInfoBiz {
 
     @Override
     public SupportInfoDto recommendSupportInfo(String input) {
+        SupportInfoDto SupportInfoDto = new SupportInfoDto();
 
+        String region = null;
+        String usage = null;
+        String limit = null;
+        String rate = null;
 
-        return null;
+        return SupportInfoDto;
     }
 
     private SupportInfoTable convertDateToSupportInfoTable(SupportInfoDto supportInfoDto, String code) {

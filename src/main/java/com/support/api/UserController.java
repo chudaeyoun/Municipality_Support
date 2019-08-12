@@ -30,7 +30,7 @@ public class UserController {
 
         logger.info("Method : signup(), param {userDto} => " + userDto);
 
-        if(userDto == null) {
+        if (userDto == null) {
             logger.error("파라미터 확인을 해주세요. param {userDto} => null");
             return new ResponseEntity(new BizException("계정정보를 확인해주세요."), HttpStatus.BAD_REQUEST);
         }
@@ -40,7 +40,7 @@ public class UserController {
             userDto.setJwt(userBizImpl.makeJwt(userDto));
 
             return new ResponseEntity(userDto, HttpStatus.OK);
-        } catch(Exception e) {
+        } catch (Exception e) {
             logger.error(e.getMessage());
             return new ResponseEntity(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -48,21 +48,14 @@ public class UserController {
 
     @PostMapping("/signin")
     public ResponseEntity<String> signin(@RequestBody UserDto userDto) {
-        logger.info("Method : createJwt(), param {userDto} => " + userDto);
+        logger.info("Method : signin(), param {userDto} => " + userDto);
 
         return new ResponseEntity(userBizImpl.makeJwt(userDto), HttpStatus.OK);
     }
 
     @PostMapping("/refresh")
     public ResponseEntity<String> refresh(@RequestBody UserDto userDto) {
-        logger.info("Method : createJwt(), param {userDto} => " + userDto);
-
-        return new ResponseEntity(userBizImpl.makeJwt(userDto), HttpStatus.OK);
-    }
-
-    @PostMapping("/jwts")
-    public ResponseEntity<String> createJwt(@RequestBody UserDto userDto) {
-        logger.info("Method : createJwt(), param {userTable} => " + userDto);
+        logger.info("Method : refresh(), param {userDto} => " + userDto);
 
         return new ResponseEntity(userBizImpl.makeJwt(userDto), HttpStatus.OK);
     }

@@ -36,8 +36,8 @@ public class UserBizImpl implements UserBiz {
 
         Map<String, Object> headerMap = Maps.newHashMap();
 
-        headerMap.put("typ","JWT");
-        headerMap.put("alg","HS256");
+        headerMap.put("typ", "JWT");
+        headerMap.put("alg", "HS256");
 
         Map<String, Object> map = Maps.newHashMap();
 
@@ -80,7 +80,7 @@ public class UserBizImpl implements UserBiz {
         userTable.setId(userDto.getId());
         userTable.setPw(userDto.getPw());
 
-        if(!userRepository.existsById(userDto.getId())) {
+        if (!userRepository.existsById(userDto.getId())) {
             userRepository.save(userTable);
             return 1;
         } else {
