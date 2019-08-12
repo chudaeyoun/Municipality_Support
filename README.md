@@ -71,7 +71,7 @@ http://localhost:8080/console
 2. 조회, 등록 요청 시에 User -> Controller -> Service -> Repository -> Database 형태로 요청 *(Spring MVC)*
 
 ## 고려사항
-1. *csv*파일은 *api*호출 시 파일 넣어서 호출 시 업로드 
+1. *csv*파일은 *api*안에 넣어서 호출 시 업로드 
 2. 각 Api 호출 시 *interceptor*에서 유효한 토큰인지 체크
-3. 지자체 지원정보 수정은 입력할때와 같이 *save*사용 (데이터가 변경된 것이라면 자동 update)
+3. 지자체 지원정보 수정은 입력할때와 같이 *save*사용 (데이터가 변경된 것이라면 자동 *update*)
 4. 추천알고리즘에서 가중치는 위치만 고려 (다른 정보들은 키워드로 데이터 비교만으로 필터가능)
