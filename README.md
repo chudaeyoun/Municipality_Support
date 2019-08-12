@@ -4,7 +4,7 @@
 
 ## Api 기능
 
-###SupportInfo
+*SupportInfo*
 - 데이터 파일전송에서 데이터베이스에 저장 (있는 데이터는 업데이트)
 
     [POST] /api/supportInfo/files
@@ -33,14 +33,17 @@
   
     [POST] /api/supportInfo/recommends
  
- ###User
-- singup 계정생성
+ *User*
+- singup 계정생성      
+  
   [POST] /api/user/signup
   
- - signin 로그인
+- signin 로그인
+ 
   [POST] /api/user/signin
   
- - refresh 토큰 재발급
+- refresh 토큰 재발급
+ 
   [POST] /api/user/refresh
 
 ## 개발환경
@@ -53,13 +56,22 @@
 
 ## 프로젝트 빌드, 실행 방법
 
-Springboot 환경에서 동작하는 프로젝트이며, Application.java에서 Application을 실행하면 동작한다.
+Springboot 환경에서 동작하는 프로젝트이며, Application.java에서 Application을 실행하면 동작
 
 - DB Admin Page
 http://localhost:8080/console
 
 ## 사용 Flow
+1. 계정 생성 및 로그인  
+2. cvs 파일 업로드 
+3. 각 Api 테스트
 
 ## 동작방식
+1. 웹 브라우저와 *WAS*와의 통신 방식은 HTTP 통신을 지원 *(REST API)*
+2. 조회, 등록 요청 시에 User -> Controller -> Service -> Repository -> Database 형태로 요청 *(Spring MVC)*
 
 ## 고려사항
+1. *csv*파일은 *api*호출 시 파일 넣어서 호출 시 업로드 
+2. 각 Api 호출 시 *interceptor*에서 유효한 토큰인지 체크
+3. 지자체 지원정보 수정은 입력할때와 같이 *save*사용 (데이터가 변경된 것이라면 자동 update)
+4. 추천알고리즘에서 가중치는 위치만 고려 (다른 정보들은 키워드로 데이터 비교만으로 필터가능)
