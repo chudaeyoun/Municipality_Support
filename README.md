@@ -29,7 +29,7 @@
 
     [GET] /api/supportInfo/leastRate
   
- -  특정 기사를 분석하여 지자체정보 추천    
+ -  특정 기사를 분석하여 지자체정보 추천 (미구현)
   
     [POST] /api/supportInfo/recommends
  
@@ -42,7 +42,7 @@
  
   [POST] /api/user/signin
   
-- refresh 토큰 재발급
+- refresh 토큰 재발급 (미구현)
  
   [POST] /api/user/refresh
 
