@@ -21,7 +21,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.io.*;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -30,8 +29,6 @@ import java.util.UUID;
 public class SupportInfoApiController {
 
     private static final Logger logger = LoggerFactory.getLogger(SupportInfoApiController.class);
-
-    private static String UPLOADED_FOLDER = "file";
 
     @Autowired
     private SupportInfoBiz supportInfoBiz;

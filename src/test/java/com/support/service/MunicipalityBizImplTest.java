@@ -17,7 +17,7 @@ import static org.mockito.BDDMockito.given;
 @SpringBootTest(classes = MunicipalityBizImpl.class)
 public class MunicipalityBizImplTest {
 
-    //@Autowired
+    @Autowired
     private MunicipalityBizImpl municipalityBizImpl;
 
     @MockBean
