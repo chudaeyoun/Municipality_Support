@@ -50,7 +50,7 @@ public class UserApiControllerTest {
         json.addProperty("pw", userDto.getPw());
 
         mvc.perform(
-                post("/api/user/singup")
+                post("/api/user/signup")
                         .contentType("application/json")
                         .content(json.toString()))
                 .andExpect(status().isOk());
