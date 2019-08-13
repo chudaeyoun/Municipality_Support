@@ -2,7 +2,6 @@ package com.support.api;
 
 import com.support.domain.UserDto;
 import com.support.service.UserBiz;
-import com.support.service.UserBizImpl;
 import com.support.util.BizException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

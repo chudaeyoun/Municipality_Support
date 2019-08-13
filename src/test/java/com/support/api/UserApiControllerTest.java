@@ -20,7 +20,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RunWith(SpringRunner.class)
-@WebMvcTest(SupportInfoApiController.class)
+@WebMvcTest(UserApiController.class)
 public class UserApiControllerTest {
 
     @Autowired
@@ -42,8 +42,8 @@ public class UserApiControllerTest {
     public void signup() throws Exception {
         // given
         UserDto userDto = getUser();
-        String jwt = userBiz.makeJwt(getUser());
-        given(userBiz.makeJwt(getUser())).willReturn(jwt);
+        String jwt = userBiz.makeJwt(userDto);
+        given(userBiz.makeJwt(userDto)).willReturn(jwt);
 
         JsonObject json = new JsonObject();
         json.addProperty("id", userDto.getId());
