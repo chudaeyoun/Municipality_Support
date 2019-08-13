@@ -3,6 +3,8 @@ package com.support.api;
 import com.google.gson.JsonObject;
 import com.support.domain.UserDto;
 import com.support.repository.UserRepository;
+import com.support.service.MunicipalityBiz;
+import com.support.service.SupportInfoBiz;
 import com.support.service.UserBiz;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -26,6 +28,12 @@ public class UserApiControllerTest {
 
     @MockBean
     private UserBiz userBiz;
+
+    @MockBean
+    private SupportInfoBiz supportInfoBiz;
+
+    @MockBean
+    private MunicipalityBiz municipalityBiz;
 
     @MockBean
     private UserRepository userRepository;
