@@ -19,15 +19,15 @@
   
  - 지자체의 지원정보 수정
     
-    [POST] /api/supportInfo/modified
+    [PUT] /api/supportInfo/modified
   
  - 지원한도 컬럼에서 지원금액으로 내림차순, 이차보전 평균비율 오름차순하여 특정 개수만 지자체명 검색
   
-    [POST] /api/supportInfo/limitDesc
+    [POST] /api/supportInfo/names
   
  - 이차보전 컬럼에서 보전 비율이 가장 작은 추천 기관명 검색
 
-    [GET] /api/supportInfo/leastRate
+    [GET] /api/supportInfo/rates
   
  -  특정 기사를 분석하여 지자체정보 추천 (미구현)
   

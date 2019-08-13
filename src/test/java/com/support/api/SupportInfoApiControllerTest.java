@@ -24,8 +24,7 @@ import java.util.List;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.BDDMockito.given;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RunWith(SpringRunner.class)
@@ -169,7 +168,7 @@ public class SupportInfoApiControllerTest {
         json.addProperty("reception", supportInfoDto.getReception());
 
         mvc.perform(
-                post("/api/supportInfo/modified")
+                put("/api/supportInfo/modified")
                         .contentType("application/json")
                         .content(json.toString()))
                 .andExpect(status().isNoContent());
@@ -187,7 +186,7 @@ public class SupportInfoApiControllerTest {
         json.addProperty("cnt", "1");
 
         mvc.perform(
-                post("/api/supportInfo/limitDesc")
+                post("/api/supportInfo/names")
                         .contentType("application/json")
                         .content(json.toString()))
                 .andExpect(status().isOk());
@@ -203,7 +202,7 @@ public class SupportInfoApiControllerTest {
 
         // when
         MockHttpServletResponse response = mvc.perform(
-                get("/api/supportInfo/leastRate")
+                get("/api/supportInfo/rates")
                         .accept(MediaType.APPLICATION_JSON))
                 .andReturn().getResponse();
 

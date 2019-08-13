@@ -127,7 +127,7 @@ public class SupportInfoApiController {
         }
     }
 
-    @PostMapping("/modified")
+    @PutMapping("/modified")
     public ResponseEntity<SupportInfoDto> updateSupportInfo(@RequestBody SupportInfoDto supportInfoDto) {
         if (supportInfoDto == null) {
             logger.error("파라미터 확인을 해주세요. 지원 지자체 정보 => null");
@@ -155,7 +155,7 @@ public class SupportInfoApiController {
     }
 
 
-    @PostMapping("/limitDesc")
+    @PostMapping("/names")
     public ResponseEntity<SupportInfoDto> searchRegionLimitDescByCnt(@RequestBody String json) {
         JsonParser jp = new JsonParser();
         JsonElement je = jp.parse(json);
@@ -181,7 +181,7 @@ public class SupportInfoApiController {
         }
     }
 
-    @GetMapping("/leastRate")
+    @GetMapping("/rates")
     public ResponseEntity<List<String>> searchInstituteByMinRate() {
         try {
             List<String> instituteList = supportInfoBiz.searchInstituteByMinRate();
