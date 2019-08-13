@@ -7,4 +7,7 @@ public interface UserBiz {
     String makeJwt(UserDto userDto);
 
     int checkJwt(String jwt);
+
+    int registerUser(UserDto userDto);
+
 }
