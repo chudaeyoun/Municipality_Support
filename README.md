@@ -15,15 +15,15 @@
 
 -  지자체명을 입력 받아 해당 지차체의 지원정보 검색
  
-    [GET] /api/supportInfo/infos
+    [POST] /api/supportInfo/infos
   
  - 지자체의 지원정보 수정
     
-    [PUT] /api/supportInfo/modified
+    [POST] /api/supportInfo/modified
   
  - 지원한도 컬럼에서 지원금액으로 내림차순, 이차보전 평균비율 오름차순하여 특정 개수만 지자체명 검색
   
-    [GET] /api/supportInfo/limitDesc
+    [POST] /api/supportInfo/limitDesc
   
  - 이차보전 컬럼에서 보전 비율이 가장 작은 추천 기관명 검색
 
@@ -72,6 +72,6 @@ http://localhost:8080/console
 
 ## 고려사항
 1. *csv*파일은 *api*안에 넣어서 호출 시 업로드 
-2. 각 Api 호출 시 *interceptor*에서 유효한 토큰인지 체크
+2. 각 Api 호출 시 *interceptor*에서 유효한 토큰인지 체크 (추후 적용)
 3. 지자체 지원정보 수정은 입력할때와 같이 *save*사용 (데이터가 변경된 것이라면 자동 *update*)
 4. 추천알고리즘에서 가중치는 위치만 고려 (다른 정보들은 키워드로 데이터 비교만으로 필터가능)

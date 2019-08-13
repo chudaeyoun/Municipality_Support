@@ -102,7 +102,7 @@ public class SupportInfoApiController {
         }
     }
 
-    @GetMapping("/infos")
+    @PostMapping("/infos")
     public ResponseEntity<SupportInfoDto> getSupportInfo(@RequestBody Municipality municipality) {
         if (municipality == null) {
             logger.error("파라미터 확인을 해주세요. param {region} => null");
@@ -158,7 +158,7 @@ public class SupportInfoApiController {
     }
 
 
-    @GetMapping("/limitDesc")
+    @PostMapping("/limitDesc")
     public ResponseEntity<SupportInfoDto> searchRegionLimitDescByCnt(@RequestBody String json) {
         JsonParser jp = new JsonParser();
         JsonElement je = jp.parse(json);

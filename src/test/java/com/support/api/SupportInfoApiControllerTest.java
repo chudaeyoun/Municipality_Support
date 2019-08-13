@@ -35,6 +35,7 @@ public class SupportInfoApiControllerTest {
     @Autowired
     private MockMvc mvc;
 
+
     @MockBean
     private SupportInfoBiz supportInfoBiz;
 
@@ -47,7 +48,7 @@ public class SupportInfoApiControllerTest {
     @MockBean
     private MunicipalityRepository municipalityRepository;
 
-   @Test
+    @Test
     public void singleFileUpload() throws Exception {
         // given
         SupportInfoTable supportInfoTable = supportInfoBiz.insertSupportInfoTable(getCsv());
@@ -66,7 +67,8 @@ public class SupportInfoApiControllerTest {
         mvc.perform(
                 post("/api/supportInfo/files")
                         .contentType("multipart/form-data")
-                        .content(json.toString())).andExpect(status().isBadRequest());
+                        .content(json.toString()))
+                .andExpect(status().isBadRequest());
     }
 
     @Test
@@ -111,19 +113,15 @@ public class SupportInfoApiControllerTest {
         SupportInfoDto supportInfoDto = convertDateToSupportInfoDto(supportInfoTable);
         given(supportInfoBiz.getSupportInfoByCode(supportInfoTable.getCode())).willReturn(supportInfoDto);
 
-        // when
         JsonObject json = new JsonObject();
         json.addProperty("code", supportInfoTable.getMunicipality().getCode());
         json.addProperty("region", supportInfoTable.getMunicipality().getRegion());
 
-        MockHttpServletResponse response = mvc.perform(
-                get("/api/supportInfo/infos")
+        mvc.perform(
+                post("/api/supportInfo/infos")
                         .contentType("application/json")
                         .content(json.toString()))
-                .andReturn().getResponse();
-
-        // then
-        assertThat(response.getStatus()).isEqualTo(HttpStatus.NO_CONTENT.value());
+                .andExpect(status().isNoContent());
     }
 
     @Test
@@ -134,15 +132,11 @@ public class SupportInfoApiControllerTest {
         JsonObject json = new JsonObject();
         json.addProperty("region", "1234");
 
-        // when
-        MockHttpServletResponse response = mvc.perform(
-                get("/api/supportInfo/infos")
+        mvc.perform(
+                post("/api/supportInfo/infos")
                         .contentType("application/json")
                         .content(json.toString()))
-                .andReturn().getResponse();
-
-        // then
-        assertThat(response.getStatus()).isEqualTo(HttpStatus.NO_CONTENT.value());
+                .andExpect(status().isNoContent());
     }
 
     @Test
@@ -150,14 +144,10 @@ public class SupportInfoApiControllerTest {
         // given
         given(supportInfoBiz.getSupportInfoByCode("")).willReturn(new SupportInfoDto());
 
-        // when
-        MockHttpServletResponse response = mvc.perform(
-                get("/api/supportInfo/infos")
-                        .accept(MediaType.APPLICATION_JSON))
-                .andReturn().getResponse();
-
-        // then
-        assertThat(response.getStatus()).isEqualTo(HttpStatus.BAD_REQUEST.value());
+        mvc.perform(
+                post("/api/supportInfo/infos")
+                        .contentType("application/json"))
+                .andExpect(status().isBadRequest());
     }
 
     @Test
@@ -181,7 +171,8 @@ public class SupportInfoApiControllerTest {
         mvc.perform(
                 post("/api/supportInfo/modified")
                         .contentType("application/json")
-                        .content(json.toString())).andExpect(status().isNoContent());
+                        .content(json.toString()))
+                .andExpect(status().isNoContent());
     }
 
     @Test
@@ -195,15 +186,11 @@ public class SupportInfoApiControllerTest {
         JsonObject json = new JsonObject();
         json.addProperty("cnt", "1");
 
-        // when
-        MockHttpServletResponse response = mvc.perform(
-                get("/api/supportInfo/limitDesc")
+        mvc.perform(
+                post("/api/supportInfo/limitDesc")
                         .contentType("application/json")
                         .content(json.toString()))
-                .andReturn().getResponse();
-
-        // then
-        assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
+                .andExpect(status().isOk());
     }
 
     @Test
@@ -235,7 +222,8 @@ public class SupportInfoApiControllerTest {
         mvc.perform(
                 post("/api/supportInfo/save")
                         .contentType("application/json")
-                        .content(json.toString())).andExpect(status().isOk());
+                        .content(json.toString()))
+                .andExpect(status().isOk());
     }
 
     private List<SupportInfoTable> getSupportInfoTables(int createCnt) {
